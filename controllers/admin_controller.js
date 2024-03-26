@@ -712,15 +712,61 @@ module.exports.controller = (app, io, socket_list ) => {
     })
 
 
+    // =================================== PRODUCT DELETE ===================================
 
 
+    app.post('/api/admin/product_delete', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+
+        helper.CheckParameterValid(res, reqObj, ["prod_id"], () => {
+
+            checkAccessToken(req.headers, res, (uObj) => {
+
+                db.query("UPDATE `product_detail` SET `status`=?,`modify_date`=NOW() WHERE  `prod_id`= ? AND `status` = ? ", [
+                    "2", reqObj.prod_id, "1"
+                ], (err, result) => {
+
+                    if (err) {
+                        helper.ThrowHtmlError(err, res);
+                        return;
+                    }
+
+                    if (result.affectedRows > 0) {
+                        res.json({
+                            "status": "1", "message": msg_product_delete
+                        });
+                    } else {
+                        res.json({ "status": "0", "message": msg_fail })
+                    }
+
+                })
+            }, "2")
+        })
+    })
+
+
+
+    // ===================================  ===================================
+
+
+
+    // ===================================  ===================================
+
+
+
+    // ===================================  ===================================
+
+
+
+    
 
 
  
 }
 
 
-//=======================================================>>>
+//======================================================= >>>
 
 
 function saveImage(imageFile, savePath) {
