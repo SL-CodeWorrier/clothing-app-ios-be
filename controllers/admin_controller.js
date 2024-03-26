@@ -583,7 +583,7 @@ module.exports.controller = (app, io, socket_list ) => {
                 helper.Dlog("---------- Files ----")
                 helper.Dlog(files)
 
-                helper.CheckParameterValid(res, reqObj, ["name", "detail", "cat_id", "brand_id", "type_id", "unit_value", "price", "product_date"], () => {
+                helper.CheckParameterValid(res, reqObj, ["name", "detail", "cat_id", "brand_id", "type_id", "unit_value", "price"], () => {
                     helper.CheckParameterValid(res, files, ["image"], () => {
                         var imageNamePathArr = []
                         var fullImageNamePathArr = [];
@@ -675,6 +675,39 @@ module.exports.controller = (app, io, socket_list ) => {
 
             })
 
+        })
+    })
+
+
+    // =================================== PRODUCT UPDATE ===================================
+
+    app.post('/api/admin/product_update', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+
+        helper.CheckParameterValid(res, reqObj, ["prod_id", "name", "detail", "cat_id", "brand_id", "type_id", "unit_value", "price"], () => {
+
+            checkAccessToken(req.headers, res, (uObj) => {
+
+                db.query("UPDATE `product_detail` SET `cat_id`=?,`brand_id`=?,`type_id`=?,`name`=?,`detail`=?,`unit_value`=?,`price`=?, `modify_date`=NOW() WHERE  `prod_id`= ? AND `status` = ? ", [
+                    reqObj.cat_id, reqObj.brand_id, reqObj.type_id, reqObj.name, reqObj.detail, reqObj.unit_value, reqObj.price, reqObj.prod_id, "1"
+                ], (err, result) => {
+
+                    if (err) {
+                        helper.ThrowHtmlError(err, res);
+                        return;
+                    }
+
+                    if (result.affectedRows > 0) {
+                        res.json({
+                            "status": "1", "message": msg_product_update
+                        });
+                    } else {
+                        res.json({ "status": "0", "message": msg_fail })
+                    }
+
+                })
+            }, "2")
         })
     })
 
