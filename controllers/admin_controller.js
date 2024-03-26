@@ -24,6 +24,10 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_type_update = "Type updated Successfully.";
     const msg_type_delete = "Type deleted Successfully.";
 
+    const msg_product_added = "Product added Successfully.";
+    const msg_product_update = "Product updated Successfully.";
+    const msg_product_delete = "Product deleted Successfully.";
+
     const msg_already_added = "this value already added here";
     const msg_added = "already added here";
 
@@ -560,6 +564,120 @@ module.exports.controller = (app, io, socket_list ) => {
     })
 
 
+    // =================================== PRODUCT ADD ===================================
+
+
+    app.post("/api/admin/product_add", (req, res) => {
+        var form = new multiparty.Form();
+
+        checkAccessToken(req.headers, res, (uObj) => {
+
+            form.parse(req, (err, reqObj, files) => {
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return
+                }
+
+                helper.Dlog("---------- Parameter ----")
+                helper.Dlog(reqObj)
+                helper.Dlog("---------- Files ----")
+                helper.Dlog(files)
+
+                helper.CheckParameterValid(res, reqObj, ["name", "detail", "cat_id", "brand_id", "type_id", "unit_value", "price", "product_date"], () => {
+                    helper.CheckParameterValid(res, files, ["image"], () => {
+                        var imageNamePathArr = []
+                        var fullImageNamePathArr = [];
+                        files.image.forEach(imageFile => {
+                            var extension = imageFile.originalFilename.substring(imageFile.originalFilename.lastIndexOf(".") + 1);
+                            var imageFileName = "product/" + helper.fileNameGenerate(extension);
+
+                            imageNamePathArr.push(imageFileName);
+                            fullImageNamePathArr.push(helper.ImagePath() + imageFileName);
+                            saveImage(imageFile, imageSavePath + imageFileName);
+                        });
+
+                        helper.Dlog(imageNamePathArr);
+                        helper.Dlog(fullImageNamePathArr);
+
+                        db.query("INSERT INTO `product_detail`(`cat_id`, `brand_id`, `type_id`, `name`, `detail`, `unit_value`, `price`, `created_date`, `modify_date`) VALUES (?,?,?, ?,?, ?,?, NOW(), NOW() ) ", [reqObj.cat_id[0], reqObj.brand_id[0], reqObj.type_id[0], reqObj.name[0], reqObj.detail[0], reqObj.unit_value[0], reqObj.price[0]], (err, result) => {
+                            if (err) {
+                                helper.ThrowHtmlError(err, res);
+                                return
+                            }
+
+                            if (result) {
+
+
+
+                                // var nutritionInsertData = []
+
+                                // var nutritionDataArr = JSON.parse(reqObj.nutrition_date[0])
+
+                                // nutritionDataArr.forEach(nObj => {
+                                //     nutritionInsertData.push([result.insertId, nObj.name, nObj.value]);
+                                // });
+
+
+
+                                // if (nutritionDataArr.length > 0) {
+                                //     db.query("INSERT INTO `nutrition_detail`(`prod_id`, `nutrition_name`, `nutrition_value`) VALUES ? ", [nutritionInsertData], (err, nResult) => {
+                                //         if (err) {
+                                //             helper.ThrowHtmlError(err, res);
+                                //             return
+                                //         }
+
+                                //         if (nResult) {
+                                //             helper.Dlog(" nutritionInsert succes");
+                                //         } else {
+                                //             // res.json({ "status": "0", "message": msg_fail })
+                                //             helper.Dlog(" nutritionInsert fail");
+                                //         }
+
+
+                                //     })
+                                // }
+
+                                
+
+                                var imageInsertArr = []
+
+                                imageNamePathArr.forEach(imagePath => {
+                                    imageInsertArr.push([result.insertId, imagePath]);
+                                });
+
+                                db.query("INSERT INTO `image_detail`(`prod_id`, `image`) VALUES ? ", [imageInsertArr], (err, iResult) => {
+                                    if (err) {
+                                        helper.ThrowHtmlError(err, res);
+                                        return
+                                    }
+
+                                    if (iResult) {
+                                        helper.Dlog(" imageInsertArr succes");
+                                    } else {
+                                        helper.Dlog(" imageInsertArr fail");
+                                    }
+
+                                })
+
+
+                                res.json({
+                                    "status": "1", "message": msg_product_added
+                                });
+
+                            } else {
+                                res.json({ "status": "0", "message": msg_fail })
+                            }
+                        })
+
+
+                    })
+                })
+
+            })
+
+        })
+    })
+
 
 
 
@@ -569,11 +687,24 @@ module.exports.controller = (app, io, socket_list ) => {
 }
 
 
+//=======================================================>>>
 
+
+function saveImage(imageFile, savePath) {
+    fs.rename(imageFile.path, savePath, (err) => {
+
+        if (err) {
+            helper.ThrowHtmlError(err);
+            return;
+        }
+    })
+}
 
 
 
 // =================================== ACCESS TOKEN ===================================
+
+
 
 function checkAccessToken(headerObj, res, callback, require_type = "") {
     helper.Dlog(headerObj.access_token);
