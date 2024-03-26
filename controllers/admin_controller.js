@@ -232,10 +232,91 @@ module.exports.controller = (app, io, socket_list ) => {
     })
 
 
+    // =================================== PRODUCT CATEGORY UPDATE ===================================
+
+    app.post("/api/admin/product_category_update", (req, res) => {
+        var form = new multiparty.Form();
+
+        checkAccessToken(req.headers, res, (uObj) => {
+
+            form.parse(req, (err, reqObj, files) => {
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return
+                }
+
+                helper.Dlog("---------- Parameter ----")
+                helper.Dlog(reqObj)
+                helper.Dlog("---------- Files ----")
+                helper.Dlog(files)
+
+                helper.CheckParameterValid(res, reqObj, ["cat_id", "cat_name", "color"], () => {
+
+                    var condition = "";
+                    var imageFileName = "";
+
+                    if (files.image != undefined || files.image != null) {
+                        var extension = files.image[0].originalFilename.substring(files.image[0].originalFilename.lastIndexOf(".") + 1);
+
+                        imageFileName = "category/" + helper.fileNameGenerate(extension);
+                        var newPath = imageSavePath + imageFileName;
+
+                        condition = " `image` = '" + imageFileName + "', ";
+                        fs.rename(files.image[0].path, newPath, (err) => {
+                            if (err) {
+                                helper.ThrowHtmlError(err);
+                                return
+                            } else {
+
+                            }
+                        })
+                    }
 
 
+                    db.query("UPDATE `category_detail` SET `cat_name`=?," + condition + " `color`=?,`modify_date`=NOW() WHERE `cat_id`= ? AND `status` = ?", [
+                        reqObj.cat_name[0], reqObj.color[0], reqObj.cat_id[0], "1"
+                    ], (err, result) => {
+
+                        if (err) {
+                            helper.ThrowHtmlError(err, res);
+                            return;
+                        }
+
+                        if (result) {
+                            res.json({
+                                "status": "1", "payload": {
+                                    "cat_id": parseInt(reqObj.cat_id[0]),
+                                    "cat_name": reqObj.cat_name[0],
+                                    "color": reqObj.color[0],
+                                    "image": helper.ImagePath() + imageFileName,
+                                }, "message": msg_category_update
+                            });
+                        } else {
+                            res.json({ "status": "0", "message": msg_fail })
+                        }
+
+                    })
+                })
+
+            })
+
+        })
+    })
+
+
+    // =================================== PRODUCT CATEGORY DELETE ===================================
+
+    // 
+
+
+
+    // =================================== PRODUCT CATEGORY LIST ===================================
  
 }
+
+
+
+
 
 // =================================== ACCESS TOKEN ===================================
 
