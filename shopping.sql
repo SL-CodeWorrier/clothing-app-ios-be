@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 26, 2024 at 04:38 AM
+-- Generation Time: Mar 26, 2024 at 06:22 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -162,8 +162,12 @@ CREATE TABLE `user_detail` (
   `name` varchar(100) NOT NULL DEFAULT '',
   `email` varchar(100) NOT NULL DEFAULT '',
   `mobile` varchar(15) NOT NULL DEFAULT '',
+  `mobile_code` varchar(6) NOT NULL DEFAULT '',
   `password` varchar(100) NOT NULL DEFAULT '',
-  `status` int(1) NOT NULL DEFAULT 1,
+  `auth_token` varchar(100) NOT NULL DEFAULT '',
+  `dervice_token` varchar(150) NOT NULL DEFAULT '',
+  `reset_code` varchar(6) NOT NULL DEFAULT '0000',
+  `status` int(1) NOT NULL DEFAULT 1 COMMENT '1: active, 2: delete',
   `created_date` datetime NOT NULL DEFAULT current_timestamp(),
   `modify_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
