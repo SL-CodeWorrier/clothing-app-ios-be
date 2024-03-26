@@ -306,11 +306,59 @@ module.exports.controller = (app, io, socket_list ) => {
 
     // =================================== PRODUCT CATEGORY DELETE ===================================
 
-    // 
+    app.post('/api/admin/product_category_delete', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+
+        helper.CheckParameterValid(res, reqObj, ["cat_id"], () => {
+
+            checkAccessToken(req.headers, res, (uObj) => {
+                db.query("UPDATE `category_detail` SET `status`= ?, `modify_date` = NOW() WHERE `cat_id`= ? ", [
+                    "2", reqObj.cat_id,
+                ], (err, result) => {
+
+                    if (err) {
+                        helper.ThrowHtmlError(err, res);
+                        return;
+                    }
+
+                    if (result.affectedRows > 0) {
+                        res.json({
+                            "status": "1", "message": msg_category_delete
+                        });
+                    } else {
+                        res.json({ "status": "0", "message": msg_fail })
+                    }
+
+                })
+            }, "2")
+        })
+    })
 
 
 
     // =================================== PRODUCT CATEGORY LIST ===================================
+
+    app.post('/api/admin/product_category_list', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+
+        checkAccessToken(req.headers, res, (uObj) => {
+            db.query("SELECT `cat_id`, `cat_name`,  (CASE WHEN `image` != '' THEN CONCAT('" + helper.ImagePath() + "','',`image`)  ELSE `image` END) AS `image` , `color` FROM `category_detail` WHERE `status`= ? ", [
+                "1"
+            ], (err, result) => {
+
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return;
+                }
+
+                res.json({
+                    "status": "1", "payload": result
+                });
+            })
+        }, "2")
+    })
  
 }
 
