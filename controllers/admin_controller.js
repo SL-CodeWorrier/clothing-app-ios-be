@@ -20,6 +20,10 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_category_update = "Category updated Successfully.";
     const msg_category_delete = "Category deleted Successfully.";
 
+    const msg_type_added = "Type added Successfully.";
+    const msg_type_update = "Type updated Successfully.";
+    const msg_type_delete = "Type deleted Successfully.";
+
     const msg_already_added = "this value already added here";
     const msg_added = "already added here";
 
@@ -359,8 +363,211 @@ module.exports.controller = (app, io, socket_list ) => {
             })
         }, "2")
     })
+
+
+    // =================================== PRODUCT TYPE ADD ===================================
+
+    app.post("/api/admin/product_type_add", (req, res) => {
+        var form = new multiparty.Form();
+    
+        checkAccessToken(req.headers, res, (uObj) => {
+    
+            form.parse(req, (err, reqObj, files) => {
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return
+                }
+    
+                helper.Dlog("---------- Parameter ----")
+                helper.Dlog(reqObj)
+                helper.Dlog("---------- Files ----")
+                helper.Dlog(files)
+    
+                helper.CheckParameterValid(res, reqObj, ["type_name", "color"], () => {
+                    helper.CheckParameterValid(res, files, ["image"], () => {
+                        var extension = files.image[0].originalFilename.substring(files.image[0].originalFilename.lastIndexOf(".") + 1);
+    
+                        var imageFileName = "type/" + helper.fileNameGenerate(extension);
+                        var newPath = imageSavePath + imageFileName;
+    
+                        fs.rename(files.image[0].path, newPath, (err) => {
+                            if (err) {
+                                helper.ThrowHtmlError(err, res);
+                                return
+                            } else {
+                                db.query("INSERT INTO `type_detail`( `type_name`, `image`, `color`, `created_date`, `modify_date`) VALUES  (?,?,?, NOW(), NOW())", [
+                                    reqObj.type_name[0], imageFileName, reqObj.color[0]
+                                ], (err, result) => {
+    
+                                    if (err) {
+                                        helper.ThrowHtmlError(err, res);
+                                        return;
+                                    }
+    
+                                    if (result) {
+                                        res.json({
+                                            "status": "1", "payload": {
+                                                "type_id": result.insertId,
+                                                "type_name": reqObj.type_name[0],
+                                                "color": reqObj.color[0],
+                                                "image": helper.ImagePath() + imageFileName,
+                                            }, "message": msg_type_added
+                                        });
+                                    } else {
+                                        res.json({ "status": "0", "message": msg_fail })
+                                    }
+    
+                                })
+                            }
+                        })
+                    })
+                })
+    
+            })
+    
+        })
+    })
+    
+    // =================================== PRODUCT TYPE UPDATE ===================================
+
+    app.post("/api/admin/product_type_update", (req, res) => {
+        var form = new multiparty.Form();
+    
+        checkAccessToken(req.headers, res, (uObj) => {
+    
+            form.parse(req, (err, reqObj, files) => {
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return
+                }
+    
+                helper.Dlog("---------- Parameter ----")
+                helper.Dlog(reqObj)
+                helper.Dlog("---------- Files ----")
+                helper.Dlog(files)
+    
+                helper.CheckParameterValid(res, reqObj, ["type_id", "type_name", "color"], () => {
+    
+                    var condition = "";
+                    var imageFileName = "";
+    
+                    if (files.image != undefined || files.image != null) {
+                        var extension = files.image[0].originalFilename.substring(files.image[0].originalFilename.lastIndexOf(".") + 1);
+    
+                        imageFileName = "type/" + helper.fileNameGenerate(extension);
+                        var newPath = imageSavePath + imageFileName;
+    
+                        condition = " `image` = '" + imageFileName + "', ";
+                        fs.rename(files.image[0].path, newPath, (err) => {
+                            if (err) {
+                                helper.ThrowHtmlError(err);
+                                return
+                            } else {
+    
+                            }
+                        })
+                    }
+    
+    
+                    db.query("UPDATE `type_detail` SET `type_name`=?," + condition + " `color`=?,`modify_date`=NOW() WHERE `type_id`= ? AND `status` = ? ", [
+                        reqObj.type_name[0], reqObj.color[0], reqObj.type_id[0], "1"
+                    ], (err, result) => {
+    
+                        if (err) {
+                            helper.ThrowHtmlError(err, res);
+                            return;
+                        }
+    
+                        if (result) {
+                            res.json({
+                                "status": "1", "payload": {
+                                    "type_id": parseInt(reqObj.type_id[0]),
+                                    "type_name": reqObj.type_name[0],
+                                    "color": reqObj.color[0],
+                                    "image": helper.ImagePath() + imageFileName,
+                                }, "message": msg_type_update
+                            });
+                        } else {
+                            res.json({ "status": "0", "message": msg_fail })
+                        }
+    
+                    })
+                })
+    
+            })
+    
+        })
+    })
+
+
+    // =================================== PRODUCT TYPE DELETE ===================================
+
+    app.post('/api/admin/product_type_delete', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+    
+        helper.CheckParameterValid(res, reqObj, ["type_id"], () => {
+    
+            checkAccessToken(req.headers, res, (uObj) => {
+                db.query("UPDATE `type_detail` SET `status`= ?, `modify_date` = NOW() WHERE `type_id`= ? ", [
+                    "2", reqObj.type_id,
+                ], (err, result) => {
+    
+                    if (err) {
+                        helper.ThrowHtmlError(err, res);
+                        return;
+                    }
+    
+                    if (result.affectedRows > 0) {
+                        res.json({
+                            "status": "1", "message": msg_type_delete
+                        });
+                    } else {
+                        res.json({ "status": "0", "message": msg_fail })
+                    }
+    
+                })
+            }, "2")
+        })
+    })
+
+
+
+
+
+    // =================================== PRODUCT TYPE LIST ===================================
+
+
+    app.post('/api/admin/product_type_list', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+    
+        checkAccessToken(req.headers, res, (uObj) => {
+            db.query("SELECT `type_id`, `type_name`,  (CASE WHEN `image` != '' THEN CONCAT('" + helper.ImagePath() + "','',`image`)  ELSE `image` END) AS `image` , `color` FROM `type_detail` WHERE `status`= ? ", [
+                "1"
+            ], (err, result) => {
+    
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return;
+                }
+    
+                res.json({
+                    "status": "1", "payload": result
+                });
+            })
+        }, "2")
+    })
+
+
+
+
+
+
+
  
 }
+
 
 
 
