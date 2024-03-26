@@ -16,6 +16,10 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_brand_update = "Brand updated Successfully.";
     const msg_brand_delete = "Brand deleted Successfully.";
 
+    const msg_category_added = "Category added Successfully.";
+    const msg_category_update = "Category updated Successfully.";
+    const msg_category_delete = "Category deleted Successfully.";
+
     const msg_already_added = "this value already added here";
     const msg_added = "already added here";
 
@@ -162,6 +166,74 @@ module.exports.controller = (app, io, socket_list ) => {
             })
         }, "2")
     })
+
+
+    // =================================== PRODUCT CATEGORY ADD ===================================
+    
+    app.post("/api/admin/product_category_add", (req, res) => {
+        var form = new multiparty.Form();
+
+        checkAccessToken(req.headers, res, (uObj) => {
+
+            form.parse(req, (err, reqObj, files) => {
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return
+                }
+
+                helper.Dlog("---------- Parameter ----")
+                helper.Dlog(reqObj)
+                helper.Dlog("---------- Files ----")
+                helper.Dlog(files)
+
+                helper.CheckParameterValid(res, reqObj, ["cat_name", "color"], () => {
+                    helper.CheckParameterValid(res, files, ["image"], () => {
+                        var extension = files.image[0].originalFilename.substring(files.image[0].originalFilename.lastIndexOf(".") + 1);
+
+                        var imageFileName = "category/" + helper.fileNameGenerate(extension);
+                        var newPath = imageSavePath + imageFileName;
+
+                        fs.rename(files.image[0].path, newPath, (err) => {
+                            if (err) {
+                                helper.ThrowHtmlError(err, res);
+                                return
+                            } else {
+                                db.query("INSERT INTO `category_detail`( `cat_name`, `image`, `color`, `created_date`, `modify_date`) VALUES  (?,?,?, NOW(), NOW())", [
+                                    reqObj.cat_name[0], imageFileName, reqObj.color[0]
+                                ], (err, result) => {
+
+                                    if (err) {
+                                        helper.ThrowHtmlError(err, res);
+                                        return;
+                                    }
+
+                                    if (result) {
+                                        res.json({
+                                            "status": "1", "payload": {
+                                                "cat_id": result.insertId,
+                                                "cat_name": reqObj.cat_name[0],
+                                                "color": reqObj.color[0],
+                                                "image": helper.ImagePath() + imageFileName,
+                                            }, "message": msg_category_added
+                                        });
+                                    } else {
+                                        res.json({ "status": "0", "message": msg_fail })
+                                    }
+
+                                })
+                            }
+                        })
+                    })
+                })
+
+            })
+
+        })
+    })
+
+
+
+
  
 }
 
