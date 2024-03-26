@@ -103,59 +103,6 @@ module.exports.controller = (app, io, socket_list ) => {
         })
     })
 
-    app.post('/api/upload_multi_image', (req, res) => {
-        var form = new multiparty.Form();
-        form.parse(req, (err, reqObj, files) => {
-            if (err) {
-                helper.ThrowHtmlError(err, res);
-                return;
-            }
-
-            helper.Dlog("--------------- Parameter --------------")
-            helper.Dlog(reqObj);
-
-            helper.Dlog("--------------- Files --------------")
-            helper.Dlog(files);
-
-            if (files.image != undefined || files.image != null) {
-
-                var imageNamePathArr = []
-                var fullImageNamePathArr = [];
-                files.image.forEach( imageFile => {
-                    var extension = imageFile.originalFilename.substring(imageFile.originalFilename.lastIndexOf(".") + 1);
-                    var imageFileName = helper.fileNameGenerate(extension);
-
-                    imageNamePathArr.push(imageFileName);
-                    fullImageNamePathArr.push(helper.ImagePath() + imageFileName);
-                    saveImage(imageFile, imageSavePath + imageFileName );
-                });
-
-                helper.Dlog(imageNamePathArr);
-                helper.Dlog(fullImageNamePathArr);
-
-                var name = reqObj.name;
-                var address = reqObj.address;
-
-                helper.Dlog(name);
-                helper.Dlog(address);
-                
-
-                res.json({
-                    "status": "1",
-                    "payload": { "name": name, "address": address, "image": fullImageNamePathArr },
-                    "message": msg_success
-                })
-            }
-        })
-    })
+    
 }
 
-function saveImage(imageFile, savePath ) {
-    fs.rename(imageFile.path, savePath, (err) => {
-
-        if (err) {
-            helper.ThrowHtmlError(err);
-            return;
-        }
-    })
-}
