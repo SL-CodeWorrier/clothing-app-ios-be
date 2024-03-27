@@ -15,6 +15,9 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_already_register = "this email already register ";
     const msg_added_favorite = "add favorite list successfully";
     const msg_removed_favorite = "removed favorite list successfully";
+    const msg_invalid_item = "invalid product item";
+    const msg_add_to_item = "item added into cart successfully ";
+    const msg_remove_to_cart = "item remove form cart successfully"
 
     // =================================== LOGIN ===================================
 
@@ -341,6 +344,56 @@ module.exports.controller = (app, io, socket_list ) => {
                     })
             })
         }, '1')
+    })
+
+
+
+    // =================================== ADD TO CART ===================================
+
+    app.post('/api/app/add_to_cart', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["prod_id", "qty"], () => {
+
+                db.query("Select `prod_id` FROM `product_detail` WHERE  `prod_id` = ? AND `status` = 1 ", [reqObj.prod_id], (err, result) => {
+                    if (err) {
+                        helper.ThrowHtmlError(err, res)
+                        return;
+                    }
+
+                    if (result.length > 0) {
+                        //Valid Item
+
+                        db.query("INSERT INTO `cart_detail`(`user_id`, `prod_id`, `qty`) VALUES (?,?,?) ", [userObj.user_id, reqObj.prod_id, reqObj.qty], (err, result) => {
+                            if (err) {
+                                helper.ThrowHtmlError(err, res)
+                                return
+                            }
+
+                            if (result) {
+                                res.json({
+                                    "status": "1",
+                                    "message": msg_add_to_item
+                                })
+                            } else {
+                                res.json({
+                                    "status": "0",
+                                    "message": msg_fail
+                                })
+                            }
+                        })
+                    } else {
+                        //Invalid Item
+                        res.json({
+                            "status": "0",
+                            "message": msg_invalid_item
+                        })
+                    }
+                })
+            })
+        })
     })
 
 
