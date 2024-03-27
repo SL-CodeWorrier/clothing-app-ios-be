@@ -3,6 +3,7 @@ var helper =  require('./../helpers/helpers')
 var multiparty = require('multiparty')
 var fs = require('fs');
 var imageSavePath = "./public/img/"
+var image_base_url = helper.ImagePath();
 
 
 
@@ -172,7 +173,7 @@ module.exports.controller = (app, io, socket_list ) => {
 
 
 
-    
+
  
 }
 
