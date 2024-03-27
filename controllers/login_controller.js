@@ -282,7 +282,32 @@ module.exports.controller = (app, io, socket_list ) => {
 
 
 
-    
+    // =================================== EXPLORE CATEGORY LIST===================================
+
+
+    app.post('/api/app/explore_category_list', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body;
+
+        checkAccessToken(req.headers, res, (userObj) => {
+
+            db.query("SELECT `cat_id`, `cat_name`, (CASE WHEN `image` != '' THEN  CONCAT( '" + image_base_url + "' ,'', `image` ) ELSE '' END) AS `image` , `color` FROM `category_detail` WHERE `status` = 1 ", [], (err, result) => {
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return
+                }
+
+                res.json({
+                    "status": "1",
+                    "payload": result,
+                    "message": msg_success
+                })
+
+            })
+        }, '1')
+    })
+
+
 
 
 
