@@ -885,10 +885,70 @@ module.exports.controller = (app, io, socket_list ) => {
     })
 
 
+    // =================================== PRODUCT DETAIL ===================================
+
+    app.post('/api/admin/product_detail', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+        checkAccessToken(req.headers, res, (uObj) => {
+            helper.CheckParameterValid(res, reqObj, ["prod_id"], () => {
+
+                getProductDetail(res, reqObj.prod_id);
+               
+            })
+        }, "2")
+
+    })
+
+    function getProductDetail(res, prod_id) {
+        db.query("SELECT `pd`.`prod_id`, `pd`.`cat_id`, `pd`.`brand_id`, `pd`.`type_id`, `pd`.`name`, `pd`.`detail`, `pd`.`unit_value`, `pd`.`price`, `pd`.`created_date`, `pd`.`modify_date`, `cd`.`cat_name`, IFNULL( `bd`.`brand_name`, '' ) AS `brand_name` , `td`.`type_name` FROM `product_detail` AS  `pd` " +
+            "INNER JOIN `category_detail` AS `cd` ON `pd`.`cat_id` = `cd`.`cat_id` " +
+            "LEFT JOIN `brand_detail` AS `bd` ON `pd`.`brand_id` = `bd`.`brand_id` " +
+            "INNER JOIN `type_detail` AS `td` ON `pd`.`type_id` = `td`.`type_id` " +
+            " WHERE `pd`.`status` = ? AND `pd`.`prod_id` = ? ; " +
+            
+            // " SELECT `nutrition_id`, `prod_id`, `nutrition_name`, `nutrition_value` FROM `nutrition_detail` WHERE `prod_id` = ? AND `status` = ? ORDER BY `nutrition_name`;" +
+            
+            
+            "SELECT `img_id`, `prod_id`, `image` FROM `image_detail` WHERE `prod_id` = ? AND `status` = ? ", [
+
+
+
+            "1", prod_id, prod_id, "1", prod_id, "1",
+
+        ], (err, result) => {
+
+            if (err) {
+                helper.ThrowHtmlError(err, res);
+                return;
+            }
+
+            // result = result.replace_null()
+
+            // helper.Dlog(result);
+            
+            if(result[0].length > 0) {
+
+                // result[0][0].nutrition_list = result[1];
+                result[0][0].images = result[2];
+
+
+                res.json({  
+                    "status": "1", "payload": result[0][0]
+                });
+            }else{
+                res.json({ "status": "0", "message": "invalid item" })
+            }
+
+            
+
+        })
+    }
 
 
 
 
+    
 
 
 
