@@ -308,6 +308,44 @@ module.exports.controller = (app, io, socket_list ) => {
     })
 
 
+     // =================================== EXPLORE CATEGORY ITEM LIST===================================
+
+
+     app.post('/api/app/explore_category_items_list', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body;
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["cat_id"], () => {
+
+
+                db.query("SELECT `pd`.`prod_id`, `pd`.`cat_id`, `pd`.`brand_id`,  `pd`.`type_id`, `pd`.`name`, `pd`.`detail`, `pd`.`unit_value`, `pd`.`price`, `pd`.`created_date`, `pd`.`modify_date`, `cd`.`cat_name`, IFNULL( `bd`.`brand_name`, '' ) AS `brand_name` , `td`.`type_name`, IFNULL(`od`.`price`, `pd`.`price` ) as `offer_price`, IFNULL(`od`.`start_date`,'') as `start_date`, IFNULL(`od`.`end_date`,'') as `end_date`, (CASE WHEN `od`.`offer_id` IS NOT NULL THEN 1 ELSE 0 END) AS `is_offer_active`, ( CASE WHEN `fd`.`fav_id` IS NOT NULL THEN 1 ELSE 0 END ) AS `is_fav`, (CASE WHEN `imd`.`image` != '' THEN  CONCAT( '" + image_base_url + "' ,'', `imd`.`image` ) ELSE '' END) AS `image` FROM  `product_detail` AS `pd` " +
+                    "LEFT JOIN `favorite_detail` AS  `fd`  ON  `pd`.`prod_id` = `fd`.`prod_id` AND `fd`.`status` = 1 " +
+                    "INNER JOIN `category_detail` AS `cd` ON `pd`.`cat_id` = `cd`.`cat_id` AND `pd`.`status` = 1 " +
+                    "INNER JOIN `image_detail` AS `imd` ON `pd`.`prod_id` = `imd`.`prod_id` AND `imd`.`status` = 1 " +
+                    "LEFT JOIN `brand_detail` AS `bd` ON `pd`.`brand_id` = `bd`.`brand_id` " +
+                    "LEFT JOIN `offer_detail` AS `od` ON `pd`.`prod_id` = `od`.`prod_id` AND `od`.`status` = 1 AND `od`.`start_date` <= NOW() AND `od`.`end_date` >= NOW() " +
+                    "INNER JOIN `type_detail` AS `td` ON `pd`.`type_id` = `td`.`type_id` " +
+                    " WHERE `cd`.`cat_id` = ? AND `cd`.`status` = '1' GROUP BY `pd`.`prod_id`  ", [reqObj.cat_id], (err, result) => {
+                        if (err) {
+                            helper.ThrowHtmlError(err, res);
+                            return
+                        }
+
+                        res.json({
+                            "status": "1",
+                            "payload": result,
+                            "message": msg_success
+                        })
+
+                    })
+            })
+        }, '1')
+    })
+
+
+
+
 
 
 
