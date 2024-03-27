@@ -167,10 +167,76 @@ module.exports.controller = (app, io, socket_list ) => {
 
 
 
+    // =================================== PRODUCT DETAIL ===================================
+
+
+    app.post('/api/app/product_detail', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+        checkAccessToken(req.headers, res, (uObj) => {
+            helper.CheckParameterValid(res, reqObj, ["prod_id"], () => {
+
+                getProductDetail(res, reqObj.prod_id, uObj.user_id);
+
+            })
+        }, "1")
+
+    })
+
+    
 
 
 
 
+
+    // ==================================== >>>FUNCTION
+
+
+    function getProductDetail(res, prod_id, user_id) {
+        db.query("SELECT `pd`.`prod_id`, `pd`.`cat_id`, `pd`.`brand_id`, `pd`.`type_id`, `pd`.`name`, `pd`.`detail`, `pd`.`unit_value`, `pd`.`price`, `pd`.`created_date`, `pd`.`modify_date`, `cd`.`cat_name`, ( CASE WHEN `fd`.`fav_id` IS NOT NULL THEN 1 ELSE 0 END ) AS `is_fav` , IFNULL( `bd`.`brand_name`, '' ) AS `brand_name` , `td`.`type_name`, IFNULL(`od`.`price`, `pd`.`price` ) as `offer_price`, (CASE WHEN `imd`.`image` != '' THEN  CONCAT( '" + image_base_url + "' ,'', `imd`.`image` ) ELSE '' END) AS `image`, IFNULL(`od`.`start_date`,'') as `start_date`, IFNULL(`od`.`end_date`,'') as `end_date`, (CASE WHEN `od`.`offer_id` IS NOT NULL THEN 1 ELSE 0 END) AS `is_offer_active` FROM `product_detail` AS  `pd` " +
+            "INNER JOIN `category_detail` AS `cd` ON `pd`.`cat_id` = `cd`.`cat_id` " +
+            "INNER JOIN `image_detail` AS `imd` ON `pd`.`prod_id` = `imd`.`prod_id` AND `imd`.`status` = 1 " +
+            "LEFT JOIN  `favorite_detail` AS `fd` ON  `pd`.`prod_id` = `fd`.`prod_id` AND `fd`.`user_id` = ? AND `fd`.`status`=  1 " +
+            "LEFT JOIN `brand_detail` AS `bd` ON `pd`.`brand_id` = `bd`.`brand_id` " +
+            "LEFT JOIN `offer_detail` AS `od` ON `pd`.`prod_id` = `od`.`prod_id` AND `od`.`status` = 1 AND `od`.`start_date` <= NOW() AND `od`.`end_date` >= NOW() " +
+            "INNER JOIN `type_detail` AS `td` ON `pd`.`type_id` = `td`.`type_id` " +
+            " WHERE `pd`.`status` = ? AND `pd`.`prod_id` = ? GROUP BY `pd`.`prod_id`; " +
+
+            // " SELECT `nutrition_id`, `prod_id`, `nutrition_name`, `nutrition_value` FROM `nutrition_detail` WHERE `prod_id` = ? AND `status` = ? ORDER BY `nutrition_name`;" +
+
+            "SELECT `img_id`, `prod_id`, (CASE WHEN `image` != '' THEN  CONCAT( '" + image_base_url + "' ,'', `image` ) ELSE '' END) AS `image`  FROM `image_detail` WHERE `prod_id` = ? AND `status` = ? ", [
+
+
+            user_id, "1", prod_id, prod_id, "1", prod_id, "1",
+
+        ], (err, result) => {
+
+            if (err) {
+                helper.ThrowHtmlError(err, res);
+                return;
+            }
+
+            // result = result.replace_null()
+
+            // helper.Dlog(result);
+
+            if (result[0].length > 0) {
+
+                // result[0][0].nutrition_list = result[1];
+                result[0][0].images = result[2];
+
+
+                res.json({
+                    "status": "1", "payload": result[0][0]
+                });
+            } else {
+                res.json({ "status": "0", "message": "invalid item" })
+            }
+
+
+
+        })
+    }
 
 
 
