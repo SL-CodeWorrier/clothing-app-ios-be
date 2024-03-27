@@ -854,6 +854,44 @@ module.exports.controller = (app, io, socket_list ) => {
     })
 
 
+    // =================================== PRODUCT LIST ===================================
+
+    app.post('/api/admin/product_list', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+
+
+        checkAccessToken(req.headers, res, (uObj) => {
+            db.query("SELECT `pd`.`prod_id`, `pd`.`cat_id`, `pd`.`brand_id`, `pd`.`type_id`, `pd`.`name`, `pd`.`detail`, `pd`.`unit_value`, `pd`.`price`, `pd`.`created_date`, `pd`.`modify_date`, `cd`.`cat_name`, IFNULL( `bd`.`brand_name`, '' ) AS `brand_name` , `td`.`type_name` FROM `product_detail` AS  `pd` " +
+                "INNER JOIN `category_detail` AS `cd` ON `pd`.`cat_id` = `cd`.`cat_id` " +
+                "LEFT JOIN `brand_detail` AS `bd` ON `pd`.`brand_id` = `bd`.`brand_id` " +
+                "INNER JOIN `type_detail` AS `td` ON `pd`.`type_id` = `td`.`type_id` " +
+                " WHERE `pd`.`status` = ? ORDER BY `pd`.`prod_id` DESC ", [
+                "1"
+            ], (err, result) => {
+
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return;
+                }
+
+                res.json({
+                    "status": "1", "payload": result
+                });
+
+            })
+        }, "2")
+
+    })
+
+
+
+
+
+
+
+
+
 
  
 }
