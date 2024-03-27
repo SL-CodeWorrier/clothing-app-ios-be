@@ -438,6 +438,46 @@ module.exports.controller = (app, io, socket_list ) => {
     })
 
 
+    // =================================== REMOVE CART ===================================
+
+
+    app.post('/api/app/remove_cart', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["cart_id", "prod_id"], () => {
+
+
+                db.query("UPDATE `cart_detail` SET `status`= '2', `modify_date`= NOW() WHERE `cart_id` = ? AND `prod_id` = ? AND  `user_id` = ? AND  `status` = ? ", [reqObj.cart_id, reqObj.prod_id, userObj.user_id, "1"], (err, result) => {
+
+                    if (err) {
+                        helper.ThrowHtmlError(err, res)
+                        return
+                    }
+
+                    if (result.affectedRows > 0) {
+                        res.json({
+                            "status": "1",
+                            "message": msg_remove_to_cart
+                        })
+                    } else {
+                        res.json({
+                            "status": "0",
+                            "message": msg_fail
+                        })
+                    }
+                })
+
+            })
+        })
+    })
+
+
+
+
+
+
 
 
 
