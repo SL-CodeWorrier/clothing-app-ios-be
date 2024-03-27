@@ -13,6 +13,8 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_fail = "fail";
     const msg_invalidUser = "invalid username and password";
     const msg_already_register = "this email already register ";
+    const msg_added_favorite = "add favorite list successfully";
+    const msg_removed_favorite = "removed favorite list successfully";
 
     // =================================== LOGIN ===================================
 
@@ -185,6 +187,102 @@ module.exports.controller = (app, io, socket_list ) => {
 
     
 
+    // =================================== REMOVE FAVOURITE ===================================
+
+
+    app.post('/api/app/add_remove_favorite', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body;
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["prod_id"], () => {
+                db.query("SELECT `fav_id`, `prod_id` FROM `favorite_detail` WHERE `prod_id` = ? AND `user_id` = ? AND `status` = '1' ", [reqObj.prod_id, userObj.user_id], (err, result) => {
+                    if (err) {
+                        helper.ThrowHtmlError(err, res);
+                        return
+                    }
+
+                    if (result.length > 0) {
+                        // Already add Favorite List To Delete Fave
+                        db.query("DELETE FROM `favorite_detail` WHERE `prod_id` = ? AND `user_id` = ? ", [reqObj.prod_id, userObj.user_id], (err, result) => {
+
+                            if (err) {
+                                helper.ThrowHtmlError(err, res);
+                                return
+                            } else {
+                                res.json({
+                                    "status": "1",
+                                    "message": msg_removed_favorite
+                                })
+                            }
+                        })
+
+                    } else {
+                        // Not Added  Favorite List TO Add
+                        db.query("INSERT INTO `favorite_detail`(`prod_id`, `user_id`) VALUES (?,?) ", [
+                            reqObj.prod_id, userObj.user_id
+                        ], (err, result) => {
+                            if (err) {
+                                helper.ThrowHtmlError(err, res);
+                                return
+                            }
+
+                            if (result) {
+                                res.json({
+                                    "status": "1",
+                                    "message": msg_added_favorite
+                                })
+                            } else {
+                                res.json({
+                                    "status": "0",
+                                    "message": msg_fail
+                                })
+                            }
+                        })
+
+                    }
+                })
+            })
+        }, '1')
+    })
+
+
+
+    // =================================== FAVOURITE LIST===================================
+
+
+    app.post('/api/app/favorite_list', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body;
+
+        checkAccessToken(req.headers, res, (userObj) => {
+
+            db.query("SELECT `fd`.`fav_id`, `pd`.`prod_id`, `pd`.`cat_id`, `pd`.`brand_id`,  `pd`.`type_id`, `pd`.`name`, `pd`.`detail`, `pd`.`unit_value`, `pd`.`price`, `pd`.`created_date`, `pd`.`modify_date`, `cd`.`cat_name`, IFNULL( `bd`.`brand_name`, '' ) AS `brand_name` , `td`.`type_name`, IFNULL(`od`.`price`, `pd`.`price` ) as `offer_price`, IFNULL(`od`.`start_date`,'') as `start_date`, IFNULL(`od`.`end_date`,'') as `end_date`, (CASE WHEN `od`.`offer_id` IS NOT NULL THEN 1 ELSE 0 END) AS `is_offer_active`, 1 AS `is_fav`, (CASE WHEN `imd`.`image` != '' THEN  CONCAT( '" + image_base_url + "' ,'', `imd`.`image` ) ELSE '' END) AS `image` FROM `favorite_detail` AS  `fd` " +
+                "INNER JOIN  `product_detail` AS `pd` ON  `pd`.`prod_id` = `fd`.`prod_id` AND `pd`.`status` = 1 " +
+                "INNER JOIN `category_detail` AS `cd` ON `pd`.`cat_id` = `cd`.`cat_id` " +
+                "INNER JOIN `image_detail` AS `imd` ON `pd`.`prod_id` = `imd`.`prod_id` AND `imd`.`status` = 1 " +
+                "LEFT JOIN `brand_detail` AS `bd` ON `pd`.`brand_id` = `bd`.`brand_id` " +
+                "LEFT JOIN `offer_detail` AS `od` ON `pd`.`prod_id` = `od`.`prod_id` AND `od`.`status` = 1 AND `od`.`start_date` <= NOW() AND `od`.`end_date` >= NOW() " +
+                "INNER JOIN `type_detail` AS `td` ON `pd`.`type_id` = `td`.`type_id` " +
+                " WHERE `fd`.`user_id` = ? AND `fd`.`status` = '1' GROUP BY `pd`.`prod_id` ", [userObj.user_id], (err, result) => {
+                    if (err) {
+                        helper.ThrowHtmlError(err, res);
+                        return
+                    }
+
+                    res.json({
+                        "status": "1",
+                        "payload": result,
+                        "message": msg_success
+                    })
+
+                })
+        }, '1')
+    })
+
+
+
+    
 
 
 
