@@ -1065,6 +1065,56 @@ module.exports.controller = (app, io, socket_list ) => {
     })
 
 
+    // =================================== PROOMO CODE ADD ===================================
+
+    app.post('/api/admin/promo_code_add', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["code", "title", "description", "type", "min_order_amount", "max_discount_amount", "offer_price", "start_date", "end_date" ], () => {
+                db.query("SELECT `promo_code_id` FROM `promo_code_detail` WHERE `code` = ? AND `status` = 1 ", [reqObj.code,], (err, result) => {
+                    if(err) {
+                        helper.ThrowHtmlError(err, res)
+                        return
+                    }
+
+                    if(result.length > 0) {
+                        res.json({
+                            'status':'0',
+                            'message': msg_added
+                        })
+                    }else{
+                        db.query("INSERT INTO `promo_code_detail` ( `code`, `title`, `description`, `type`, `min_order_amount`, `max_discount_amount`, `offer_price`, `start_date`, `end_date`) VALUES (?,?,?, ?,?,?, ?,?,?)", [
+                            reqObj.code, reqObj.title, reqObj.description, reqObj.type, reqObj.min_order_amount, reqObj.max_discount_amount, reqObj.offer_price, reqObj.start_date, reqObj.end_date
+                        ], (err, result) => {
+
+                            if (err) {
+                                helper.ThrowHtmlError(err, res)
+                                return
+                            }
+
+                            if(result) {
+                                res.json({
+                                    'status': '1',
+                                    'message': msg_promo_code_added
+                                })
+                            }else{
+                                res.json({
+                                    'status': '0',
+                                    'message': msg_fail
+                                })
+                            }
+                        })
+                    }
+                })
+            } )
+        }, "2" )
+    })
+
+
+
+
 
 
  

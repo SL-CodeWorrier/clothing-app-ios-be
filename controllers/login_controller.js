@@ -17,7 +17,8 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_removed_favorite = "removed favorite list successfully";
     const msg_invalid_item = "invalid product item";
     const msg_add_to_item = "item added into cart successfully ";
-    const msg_remove_to_cart = "item remove form cart successfully"
+    const msg_update_to_item = "item updated qty into cart successfully.";
+    const msg_remove_form_cart = "item remove form cart successfully";
 
     // =================================== LOGIN ===================================
 
@@ -400,6 +401,43 @@ module.exports.controller = (app, io, socket_list ) => {
 
     // =================================== UPDATE CART ===================================
 
+    // app.post('/api/app/update_cart', (req, res) => {
+    //     helper.Dlog(req.body)
+    //     var reqObj = req.body
+
+    //     checkAccessToken(req.headers, res, (userObj) => {
+    //         helper.CheckParameterValid(res, reqObj, ["cart_id", "prod_id", "new_qty"], () => {
+
+    //             // Valid
+    //             var status = "1"
+
+    //             if (reqObj.new_qty == "0") {
+    //                 status = "2"
+    //             }
+    //             db.query("UPDATE `cart_detail` SET `qty`= ? , `status`= ?, `modify_date`= NOW() WHERE `cart_id` = ? AND `prod_id` = ? AND `user_id` = ? AND `status` = ? ", [reqObj.new_qty, status, reqObj.cart_id, reqObj.prod_id, userObj.user_id, "1"], (err, result) => {
+
+    //                 if (err) {
+    //                     helper.ThrowHtmlError(err, res)
+    //                     return
+    //                 }
+
+    //                 if (result.affectedRows > 0) {
+    //                     res.json({
+    //                         "status": "1",
+    //                         "message": msg_update_to_item
+    //                     })
+    //                 } else {
+    //                     res.json({
+    //                         "status": "0",
+    //                         "message": msg_invalid_item
+    //                     })
+    //                 }
+    //             })
+
+    //         })
+    //     })
+    // })
+
     app.post('/api/app/update_cart', (req, res) => {
         helper.Dlog(req.body)
         var reqObj = req.body
@@ -460,6 +498,7 @@ module.exports.controller = (app, io, socket_list ) => {
                         res.json({
                             "status": "1",
                             "message": msg_remove_to_cart
+                            // "message": msg_remove_form_cart
                         })
                     } else {
                         res.json({
@@ -473,6 +512,56 @@ module.exports.controller = (app, io, socket_list ) => {
         })
     })
 
+
+    // =================================== CART LIST ===================================
+
+
+
+    app.post('/api/app/cart_list', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            
+
+
+            db.query(
+                "SELECT `ucd`.`cart_id`, `ucd`.`user_id`, `ucd`.`prod_id`, `ucd`.`qty`, `pd`.`cat_id`, `pd`.`brand_id`, `pd`.`type_id`, `pd`.`name`, `pd`.`detail`, `pd`.`unit_value`, `pd`.`price`, `pd`.`created_date`, `pd`.`modify_date`, `cd`.`cat_name`, ( CASE WHEN `fd`.`fav_id` IS NOT NULL THEN 1 ELSE 0 END ) AS `is_fav` , IFNULL( `bd`.`brand_name`, '' ) AS `brand_name` , `td`.`type_name`, IFNULL(`od`.`price`, `pd`.`price` ) as `offer_price`, IFNULL(`od`.`start_date`,'') as `start_date`, IFNULL(`od`.`end_date`,'') as `end_date`, (CASE WHEN `od`.`offer_id` IS NOT NULL THEN 1 ELSE 0 END) AS `is_offer_active`, (CASE WHEN `imd`.`image` != '' THEN  CONCAT( '" + image_base_url + "' ,'', `imd`.`image` ) ELSE '' END) AS `image`, (CASE WHEN `od`.`price` IS NULL THEN `pd`.`price` ELSE `od`.`price` END) as `item_price`, ( (CASE WHEN `od`.`price` IS NULL THEN `pd`.`price` ELSE `od`.`price` END) * `ucd`.`qty`)  AS `total_price` FROM `cart_detail` AS `ucd` " +
+                "INNER JOIN `product_detail` AS `pd` ON `pd`.`prod_id` = `ucd`.`prod_id` AND `pd`.`status` = 1  " +
+                "INNER JOIN `category_detail` AS `cd` ON `pd`.`cat_id` = `cd`.`cat_id` " +
+                "LEFT JOIN  `favorite_detail` AS `fd` ON  `pd`.`prod_id` = `fd`.`prod_id` AND `fd`.`user_id` = ? AND `fd`.`status`=  1 " +
+                "LEFT JOIN `brand_detail` AS `bd` ON `pd`.`brand_id` = `bd`.`brand_id` " +
+                "LEFT JOIN `offer_detail` AS `od` ON `pd`.`prod_id` = `od`.`prod_id` AND `od`.`status` = 1 AND `od`.`start_date` <= NOW() AND `od`.`end_date` >= NOW() " +
+                "INNER JOIN `image_detail` AS `imd` ON `pd`.`prod_id` = `imd`.`prod_id` AND `imd`.`status` = 1 " +
+                "INNER JOIN `type_detail` AS `td` ON `pd`.`type_id` = `td`.`type_id` " +
+                "WHERE `ucd`.`user_id` = ? AND `ucd`.`status` = ? GROUP BY `ucd`.`cart_id`, `pd`.`prod_id` ", [user_id, user_id, "1"], (err, result) => {
+                    if (err) {
+                        helper.ThrowHtmlError(err, res)
+                        return
+                    }
+    
+                    var total = result.map((cObj) => {
+                        return cObj.total_price
+                    }).reduce((patSum, a) => patSum + a, 0)
+
+                    res.json({
+                        "status": "1",
+                        "payload": result,
+                        "total": total,
+                        "message": msg_remove_form_cart
+                    })
+                })
+
+            
+        }, "1") 
+    })
+
+
+    // ===================================  ===================================
+
+
+
+    
 
 
 
@@ -529,6 +618,32 @@ module.exports.controller = (app, io, socket_list ) => {
 
         })
     }
+
+
+    // function getUserCart(res, user_id, callback) {
+    //     db.query(
+    //         "SELECT `ucd`.`cart_id`, `ucd`.`user_id`, `ucd`.`prod_id`, `ucd`.`qty`, `pd`.`cat_id`, `pd`.`brand_id`, `pd`.`type_id`, `pd`.`name`, `pd`.`detail`, `pd`.`unit_value`, `pd`.`price`, `pd`.`created_date`, `pd`.`modify_date`, `cd`.`cat_name`, ( CASE WHEN `fd`.`fav_id` IS NOT NULL THEN 1 ELSE 0 END ) AS `is_fav` , IFNULL( `bd`.`brand_name`, '' ) AS `brand_name` , `td`.`type_name`, IFNULL(`od`.`price`, `pd`.`price` ) as `offer_price`, IFNULL(`od`.`start_date`,'') as `start_date`, IFNULL(`od`.`end_date`,'') as `end_date`, (CASE WHEN `od`.`offer_id` IS NOT NULL THEN 1 ELSE 0 END) AS `is_offer_active`, (CASE WHEN `imd`.`image` != '' THEN  CONCAT( '" + image_base_url + "' ,'', `imd`.`image` ) ELSE '' END) AS `image`, (CASE WHEN `od`.`price` IS NULL THEN `pd`.`price` ELSE `od`.`price` END) as `item_price`, ( (CASE WHEN `od`.`price` IS NULL THEN `pd`.`price` ELSE `od`.`price` END) * `ucd`.`qty`)  AS `total_price` FROM `cart_detail` AS `ucd` " +
+    //         "INNER JOIN `product_detail` AS `pd` ON `pd`.`prod_id` = `ucd`.`prod_id` AND `pd`.`status` = 1  " +
+    //         "INNER JOIN `category_detail` AS `cd` ON `pd`.`cat_id` = `cd`.`cat_id` " +
+    //         "LEFT JOIN  `favorite_detail` AS `fd` ON  `pd`.`prod_id` = `fd`.`prod_id` AND `fd`.`user_id` = ? AND `fd`.`status`=  1 " +
+    //         "LEFT JOIN `brand_detail` AS `bd` ON `pd`.`brand_id` = `bd`.`brand_id` " +
+    //         "LEFT JOIN `offer_detail` AS `od` ON `pd`.`prod_id` = `od`.`prod_id` AND `od`.`status` = 1 AND `od`.`start_date` <= NOW() AND `od`.`end_date` >= NOW() " +
+    //         "INNER JOIN `image_detail` AS `imd` ON `pd`.`prod_id` = `imd`.`prod_id` AND `imd`.`status` = 1 " +
+    //         "INNER JOIN `type_detail` AS `td` ON `pd`.`type_id` = `td`.`type_id` " +
+    //         "WHERE `ucd`.`user_id` = ? AND `ucd`.`status` = ? GROUP BY `ucd`.`cart_id`, `pd`.`prod_id` ", [user_id, user_id, "1"], (err, result) => {
+    //             if (err) {
+    //                 helper.ThrowHtmlError(err, res)
+    //                 return
+    //             }
+
+    //             var total = result.map((cObj) => {
+    //                 return cObj.total_price
+    //             }).reduce((patSum, a) => patSum + a, 0)
+
+
+    //             return callback(result, total)
+    //         })
+    // }
 
 
 
