@@ -37,6 +37,10 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_already_added = "this value already added here";
     const msg_added = "already added here";
 
+    const msg_promo_code_added = "promo code added Successfully.";
+    const msg_promo_code_update = "promo code updated Successfully.";
+    const msg_promo_code_delete = "promo code deleted Successfully.";
+
     // =================================== BRAND ADD ===================================
 
     app.post('/api/admin/brand_add', (req, res) => {
@@ -1110,6 +1114,42 @@ module.exports.controller = (app, io, socket_list ) => {
                 })
             } )
         }, "2" )
+    })
+
+
+    // =================================== PROOMO CODE UPDATE ===================================
+
+    app.post('/api/admin/promo_code_update', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["promo_code_id", "title", "description", "type", "min_order_amount", "max_discount_amount", "offer_price", "start_date", "end_date"], () => {
+               
+                db.query("UPDATE `promo_code_detail` SET `title`= ? ,`description`= ? ,`type`= ? ,`min_order_amount`= ? ,`max_discount_amount`= ? ,`offer_price`= ? ,`start_date`= ? ,`end_date`= ?, `modify_date` = NOW() WHERE `promo_code_id` = ? AND `start_date` >= NOW() AND `status` = 1 ", [
+                    reqObj.title, reqObj.description, reqObj.type, reqObj.min_order_amount, reqObj.max_discount_amount, reqObj.offer_price, reqObj.start_date, reqObj.end_date, reqObj.promo_code_id
+                        ], (err, result) => {
+
+                            if (err) {
+                                helper.ThrowHtmlError(err, res)
+                                return
+                            }
+
+                            if (result.affectedRows > 0) {
+                                res.json({
+                                    'status': '1',
+                                    'message': msg_promo_code_update
+                                })
+                            } else {
+                                res.json({
+                                    'status': '0',
+                                    'message': msg_fail
+                                })
+                            }
+                        })
+                   
+            })
+        }, "2")
     })
 
 
