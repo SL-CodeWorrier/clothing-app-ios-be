@@ -1152,6 +1152,41 @@ module.exports.controller = (app, io, socket_list ) => {
         }, "2")
     })
 
+    // =================================== PROOMO CODE DELETE ===================================
+
+
+    app.post('/api/admin/promo_code_delete', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["promo_code_id"], () => {
+
+                db.query("UPDATE `promo_code_detail` SET `status`= 2 , `modify_date` = NOW() WHERE `promo_code_id` = ? AND `status` = 1 ", [reqObj.promo_code_id
+                ], (err, result) => {
+
+                    if (err) {
+                        helper.ThrowHtmlError(err, res)
+                        return
+                    }
+
+                    if (result.affectedRows > 0) {
+                        res.json({
+                            'status': '1',
+                            'message': msg_promo_code_delete
+                        })
+                    } else {
+                        res.json({
+                            'status': '0',
+                            'message': msg_fail
+                        })
+                    }
+                })
+
+            })
+        }, "2")
+    })
+
 
 
 
