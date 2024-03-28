@@ -591,6 +591,40 @@ module.exports.controller = (app, io, socket_list ) => {
 
 
 
+    // =================================== PAYMENT METHOD ADD ===================================
+
+    app.post('/api/app/add_payment_method', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["name", "card_number", "card_month", "card_year"], () => {
+                db.query("INSERT INTO `payment_method_detail` (`user_id`, `name`, `card_number`, `card_month`, `card_year`) VALUES (?,?,?, ?,? )", [
+                    userObj.user_id, reqObj.name, reqObj.card_number, reqObj.card_month, reqObj.card_year
+                ], (err, result) => {
+                    if (err) {
+                        helper.ThrowHtmlError(err, res);
+                        return
+                    }
+
+                    if (result) {
+                        res.json({
+                            "status": "1",
+                            "message": msg_add_payment_method
+                        })
+                    } else {
+                        res.json({
+                            "status": "1",
+                            "message": msg_fail
+                        })
+                    }
+                })
+            })
+        })
+    })
+
+
+
 
 
 
