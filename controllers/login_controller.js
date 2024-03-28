@@ -17,8 +17,9 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_removed_favorite = "removed favorite list successfully";
     const msg_invalid_item = "invalid product item";
     const msg_add_to_item = "item added into cart successfully ";
-    const msg_update_to_item = "item updated qty into cart successfully.";
-    const msg_remove_form_cart = "item remove form cart successfully";
+    const msg_remove_to_cart = "item remove form cart successfully"
+    // const msg_update_to_item = "item updated qty into cart successfully.";
+    // const msg_remove_form_cart = "item remove form cart successfully";
 
     const msg_add_payment_method = "payment method added successfully"
     const msg_remove_payment_method = "payment method removed successfully"
@@ -403,7 +404,42 @@ module.exports.controller = (app, io, socket_list ) => {
 
     // =================================== UPDATE CART ===================================
 
-    
+    app.post('/api/app/update_cart', (req, res) => {
+        helper.Dlog(req.body)
+        var reqObj = req.body
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["cart_id", "prod_id", "new_qty"], () => {
+
+                // Valid
+                var status = "1"
+
+                if (reqObj.new_qty == "0") {
+                    status = "2"
+                }
+                db.query("UPDATE `cart_detail` SET `qty`= ? , `status`= ?, `modify_date`= NOW() WHERE `cart_id` = ? AND `prod_id` = ? AND `user_id` = ? AND `status` = ? ", [reqObj.new_qty, status, reqObj.cart_id, reqObj.prod_id, userObj.user_id, "1"], (err, result) => {
+
+                    if (err) {
+                        helper.ThrowHtmlError(err, res)
+                        return
+                    }
+
+                    if (result.affectedRows > 0) {
+                        res.json({
+                            "status": "1",
+                            "message": msg_success
+                        })
+                    } else {
+                        res.json({
+                            "status": "0",
+                            "message": msg_fail
+                        })
+                    }
+                })
+
+            })
+        })
+    })
 
 
     // =================================== REMOVE CART ===================================
@@ -428,7 +464,6 @@ module.exports.controller = (app, io, socket_list ) => {
                         res.json({
                             "status": "1",
                             "message": msg_remove_to_cart
-                            // "message": msg_remove_form_cart
                         })
                     } else {
                         res.json({
