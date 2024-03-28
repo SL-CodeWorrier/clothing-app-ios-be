@@ -662,6 +662,31 @@ module.exports.controller = (app, io, socket_list ) => {
 
 
 
+    // =================================== PAYMENT METHOD ===================================
+
+    app.post('/api/app/payment_method', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+
+        checkAccessToken(req.headers, res, (userObj) => {
+
+            db.query("SELECT `pay_id`, `name`, RIGHT( `card_number`, 4) AS `card_number` , `card_month`, `card_year` FROM `payment_method_detail` WHERE  `user_id` = ? AND `status` = 1 ", [
+                userObj.user_id
+            ], (err, result) => {
+                if (err) {
+                    helper.ThrowHtmlError(err, res);
+                    return
+                }
+
+                res.json({
+                    "status": "1",
+                    "payload": result,
+                    "message": msg_success
+                })
+            })
+
+        })
+    })
 
 
 
