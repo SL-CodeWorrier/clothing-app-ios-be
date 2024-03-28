@@ -1,0 +1,1825 @@
+{
+	"info": {
+		"_postman_id": "b2b84953-dff1-4ea8-8bca-1595df8214f7",
+		"name": "online_shopping",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33112727"
+	},
+	"item": [
+		{
+			"name": "admin api",
+			"item": [
+				{
+					"name": "brand",
+					"item": [
+						{
+							"name": "brand_add",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "brand_name",
+											"value": "big",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/brand_add",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"brand_add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "brand_update",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "brand_name",
+											"value": "bigs",
+											"type": "default"
+										},
+										{
+											"key": "brand_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/brand_update",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"brand_update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "brand_list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/brand_list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"brand_list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "brand_delete",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "brand_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/brand_delete",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"brand_delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "category",
+					"item": [
+						{
+							"name": "product_category_add",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "cat_name",
+											"value": "Shirt",
+											"type": "text"
+										},
+										{
+											"key": "color",
+											"value": "53B175",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "postman-cloud:///1eeeb687-26a4-4f80-a5e0-00867dc69ad1"
+										},
+										{
+											"key": "cat_id",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_category_add",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_category_add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_category_update",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "cat_name",
+											"value": "Jean",
+											"type": "text"
+										},
+										{
+											"key": "color",
+											"value": "F8A44C",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "postman-cloud:///1eeeb687-26a4-4f80-a5e0-00867dc69ad1"
+										},
+										{
+											"key": "cat_id",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_category_update",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_category_update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_category_list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_category_list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_category_list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_category_delete",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "cat_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_category_delete",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_category_delete"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "type",
+					"item": [
+						{
+							"name": "product_type_add",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "type_name",
+											"value": "Shirt",
+											"type": "text"
+										},
+										{
+											"key": "color",
+											"value": "53B175",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "postman-cloud:///1eeeb687-26a4-4f80-a5e0-00867dc69ad1"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_type_add",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_type_add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_type_update",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "type_name",
+											"value": "Small",
+											"type": "text"
+										},
+										{
+											"key": "color",
+											"value": "53B175",
+											"type": "text"
+										},
+										{
+											"key": "type_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_type_update",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_type_update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_type_delete",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "type_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_type_delete",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_type_delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_type_list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_type_list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_type_list"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "product",
+					"item": [
+						{
+							"name": "product_add",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "Shirt",
+											"type": "text"
+										},
+										{
+											"key": "detail",
+											"value": "Selecting the right men's shirt depends on the occasion, your personal style, and comfort preferences. Dress shirts are a must-have for formal events, while casual shirts offer a laid-back yet stylish appearance. Polo shirts and T-shirts are versatile options that can be paired with jeans, chinos, or even shorts for a relaxed ensemble.",
+											"type": "text"
+										},
+										{
+											"key": "cat_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "brand_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "type_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "unit_value",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "8.99",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "postman-cloud:///1eeec095-2cd9-4690-8e4d-87421e7b2756"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_add",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_update",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "name",
+											"value": "Shirt",
+											"type": "text"
+										},
+										{
+											"key": "detail",
+											"value": "Selecting the right men's shirt depends on the occasion, your personal style, and comfort preferences. Dress shirts are a must-have for formal events, while casual shirts offer a laid-back yet stylish appearance. Polo shirts and T-shirts are versatile options that can be paired with jeans, chinos, or even shorts for a relaxed ensemble.",
+											"type": "text"
+										},
+										{
+											"key": "cat_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "brand_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "type_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "unit_value",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "price",
+											"value": "4.99",
+											"type": "text"
+										},
+										{
+											"key": "prod_id",
+											"value": "4",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_update",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_update"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_delete",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "prod_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_delete",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_image_add",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "prod_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "image",
+											"type": "file",
+											"src": "postman-cloud:///1eeeb941-1091-4880-9ac5-6206f7de74b7"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_image_add",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_image_add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_image_delete",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "prod_id",
+											"value": "1",
+											"type": "text"
+										},
+										{
+											"key": "img_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_image_delete",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_image_delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_detail",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "prod_id",
+											"value": "1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/product_detail",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"product_detail"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "offer",
+					"item": [
+						{
+							"name": "offer_add",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "prod_id",
+											"value": "big",
+											"type": "default"
+										},
+										{
+											"key": "price",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "start_date",
+											"value": "",
+											"description": "yyyy-mm-dd hh:mm:ss",
+											"type": "text"
+										},
+										{
+											"key": "end_date",
+											"value": "",
+											"description": "yyyy-mm-dd hh:mm:ss",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/offer_add",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"offer_add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "offer_delete",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "offer_id",
+											"value": "big",
+											"type": "default"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/offer_delete",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"offer_delete"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "offer_list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/offer_list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"offer_list"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Promo Code",
+					"item": [
+						{
+							"name": "promo_code_add",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "SAVE10",
+											"type": "default"
+										},
+										{
+											"key": "title",
+											"value": "save 10% more",
+											"type": "text"
+										},
+										{
+											"key": "start_date",
+											"value": "2024-03-28 00:00:00",
+											"description": "yyyy-mm-dd hh:mm:ss",
+											"type": "text"
+										},
+										{
+											"key": "end_date",
+											"value": "2024-04-28 00:00:00",
+											"description": "yyyy-mm-dd hh:mm:ss",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "save 10% more",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "1",
+											"description": "1 = Per , 2 = Fix\t",
+											"type": "text"
+										},
+										{
+											"key": "min_order_amount",
+											"value": "5",
+											"type": "text"
+										},
+										{
+											"key": "max_discount_amount",
+											"value": "50",
+											"type": "text"
+										},
+										{
+											"key": "offer_price",
+											"value": "10",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/promo_code_add",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"promo_code_add"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "promo_code_list",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/promo_code_list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"promo_code_list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "promo_code_update",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "access_token",
+										"value": "burORh1CvEtPEK9NPJgn",
+										"type": "default"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "promo_code_id",
+											"value": "1",
+											"type": "default"
+										},
+										{
+											"key": "title",
+											"value": "save 10% more",
+											"type": "text"
+										},
+										{
+											"key": "start_date",
+											"value": "2024-03-28 00:00:00",
+											"description": "yyyy-mm-dd hh:mm:ss",
+											"type": "text"
+										},
+										{
+											"key": "end_date",
+											"value": "2024-04-28 00:00:00",
+											"description": "yyyy-mm-dd hh:mm:ss",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "save 10% more",
+											"type": "text"
+										},
+										{
+											"key": "type",
+											"value": "1",
+											"description": "1 = Per , 2 = Fix\t",
+											"type": "text"
+										},
+										{
+											"key": "min_order_amount",
+											"value": "10",
+											"type": "text"
+										},
+										{
+											"key": "max_discount_amount",
+											"value": "50",
+											"type": "text"
+										},
+										{
+											"key": "offer_price",
+											"value": "10",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3001/api/admin/promo_code_update",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3001",
+									"path": [
+										"api",
+										"admin",
+										"promo_code_update"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "app Api",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "test@gmail.com",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "default"
+								},
+								{
+									"key": "dervice_token",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sign_up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "test@gmail.com",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "default"
+								},
+								{
+									"key": "dervice_token",
+									"value": "",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/sign_up",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"sign_up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "home",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "5n8zuuVrMKknXTbGovfy",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/home",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"home"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "product_detail",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "5n8zuuVrMKknXTbGovfy",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "prod_id",
+									"value": "5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/product_detail",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"product_detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_remove_favorite",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "5n8zuuVrMKknXTbGovfy",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "prod_id",
+									"value": "5",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/add_remove_favorite",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"add_remove_favorite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "favorite_list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "5n8zuuVrMKknXTbGovfy",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/favorite_list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"favorite_list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "explore_category_list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "5n8zuuVrMKknXTbGovfy",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/explore_category_list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"explore_category_list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "explore_category_items_list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "5n8zuuVrMKknXTbGovfy",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cat_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/explore_category_items_list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"explore_category_items_list"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_to_cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "4BtwlrDtVVvd24KBLBPp",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "prod_id",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "qty",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/add_to_cart",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"add_to_cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "4BtwlrDtVVvd24KBLBPp",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "prod_id",
+									"value": "7",
+									"type": "text"
+								},
+								{
+									"key": "new_qty",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "cart_id",
+									"value": "15",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/update_cart",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"update_cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove_cart",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "4BtwlrDtVVvd24KBLBPp",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "cart_id",
+									"value": "15",
+									"type": "text"
+								},
+								{
+									"key": "prod_id",
+									"value": "7",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/remove_cart",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"remove_cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cart_list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "4BtwlrDtVVvd24KBLBPp",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/cart_list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"cart_list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "promo_code_list",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "4BtwlrDtVVvd24KBLBPp",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/promo_code_list",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"promo_code_list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "promo_code_delete",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "burORh1CvEtPEK9NPJgn",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "promo_code_id",
+									"value": "1",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/admin/promo_code_delete",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"admin",
+								"promo_code_delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_payment_method",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "4BtwlrDtVVvd24KBLBPp",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Card1",
+									"type": "text"
+								},
+								{
+									"key": "card_number",
+									"value": "0703352851",
+									"type": "text"
+								},
+								{
+									"key": "card_month",
+									"value": "12",
+									"type": "text"
+								},
+								{
+									"key": "card_year",
+									"value": "24",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/add_payment_method",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"add_payment_method"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove_payment_method",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "4BtwlrDtVVvd24KBLBPp",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "pay_id",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/remove_payment_method",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"remove_payment_method"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "payment_method",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "access_token",
+								"value": "4BtwlrDtVVvd24KBLBPp",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/app/payment_method",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"app",
+								"payment_method"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
