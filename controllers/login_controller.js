@@ -20,6 +20,9 @@ module.exports.controller = (app, io, socket_list ) => {
     const msg_update_to_item = "item updated qty into cart successfully.";
     const msg_remove_form_cart = "item remove form cart successfully";
 
+    const msg_add_payment_method = "payment method added successfully"
+    const msg_remove_payment_method = "payment method removed successfully"
+
     // =================================== LOGIN ===================================
 
     app.post('/api/app/login', (req, res) => {
@@ -625,12 +628,46 @@ module.exports.controller = (app, io, socket_list ) => {
 
 
 
+    // =================================== PAYMENT METHOD REMOVE ===================================
+
+    app.post('/api/app/remove_payment_method', (req, res) => {
+        helper.Dlog(req.body);
+        var reqObj = req.body;
+
+        checkAccessToken(req.headers, res, (userObj) => {
+            helper.CheckParameterValid(res, reqObj, ["pay_id"], () => {
+                db.query("UPDATE `payment_method_detail` SET `status`= 2 WHERE `pay_id` = ? AND `user_id` = ? AND `status` = 1 ", [
+                    reqObj.pay_id, userObj.user_id
+                ], (err, result) => {
+                    if (err) {
+                        helper.ThrowHtmlError(err, res);
+                        return
+                    }
+
+                    if (result.affectedRows > 0) {
+                        res.json({
+                            "status": "1",
+                            "message": msg_remove_payment_method
+                        })
+                    } else {
+                        res.json({
+                            "status": "1",
+                            "message": msg_fail
+                        })
+                    }
+                })
+            })
+        })
+    })
 
 
 
 
 
-    // ==================================== >>>FUNCTION
+
+
+
+    // ==================================== >>> FUNCTION
 
 
     function getProductDetail(res, prod_id, user_id) {
