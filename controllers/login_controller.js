@@ -5,7 +5,7 @@ var fs = require('fs');
 var imageSavePath = "./public/img/"
 var image_base_url = helper.ImagePath();
 
-var deliver_price = 2.0
+// var deliver_price = 2.0
 
 module.exports.controller = (app, io, socket_list ) => {
 
@@ -489,105 +489,13 @@ module.exports.controller = (app, io, socket_list ) => {
         checkAccessToken(req.headers, res, (userObj) => {
             getUserCart(res, userObj.user_id, (result, total) => {
 
-                var promo_code_id = reqObj.promo_code_id;
-                if (promo_code_id == undefined || promo_code_id == null) {
-                    promo_code_id = ""
-                }
-
-                var deliver_type = reqObj.deliver_type;
-                if (deliver_type == undefined || deliver_type == null) {
-                    deliver_type = "1"
-                }
-
-                db.query(
-                    'SELECT `promo_code_id`, `min_order_amount`, `max_discount_amount`, `offer_price` FROM `promo_code_detail` WHERE  `start_date` <= NOW() AND `end_date` >= NOW()  AND `status` = 1  AND `promo_code_id` = ? ;'
-                    , [reqObj.promo_code_id], (err, pResult) => {
-                        if (err) {
-                            helper.ThrowHtmlError(err, res)
-                            return
-                        }
-
-
-
-                        var deliver_price_amount = 0.0
-
-                        if (deliver_type == "1") {
-                            deliver_price_amount = deliver_price
-                        } else {
-                            deliver_price_amount = 0.0;
-                        }
-
-
-                        var final_total = total
-                        var discountAmount = 0.0
-
-                        if (promo_code_id != "") {
-                            if (pResult.length > 0) {
-                                //Promo Code Apply & Valid
-
-                                if (final_total > pResult[0].min_order_amount) {
-
-                                    if (pResult[0].type == 2) {
-                                        // Fixed Discount
-                                        discountAmount = pResult[0].offer_price
-                                    } else {
-                                        //% Per
-
-                                        var disVal = final_total * (pResult[0].offer_price / 100)
-
-                                        helper.Dlog("disVal: " + disVal);
-
-                                        if (pResult[0].max_discount_amount <= disVal) {
-                                            //Max discount is more then disVal
-                                            discountAmount = pResult[0].max_discount_amount
-                                        } else {
-                                            //Max discount is Small then disVal
-                                            discountAmount = disVal
-                                        }
-                                    }
-
-
-                                } else {
-                                    res.json({
-                                        'status': "0",
-                                        "payload": result,
-                                        "total": total.toFixed(2),
-                                        "deliver_price_amount": deliver_price_amount.toFixed(2),
-                                        "discount_amount": 0,
-                                        "user_pay_price": (final_total + deliver_price_amount).toFixed(2),
-                                        'message': "Promo Code not apply need min order: $" + pResult[0].min_order_amount
-                                    })
-                                    return
-                                }
-
-                            } else {
-                                //Promo Code Apply not Valid
-                                res.json({
-                                    'status': "0",
-                                    "payload": result,
-                                    "total": total.toFixed(2),
-                                    "deliver_price_amount": deliver_price_amount.toFixed(2),
-                                    "discount_amount": 0,
-                                    "user_pay_price": (final_total + deliver_price_amount).toFixed(2),
-                                    'message': "Invalid Promo Code"
-                                })
-                                return
-                            }
-                        }
-
-                        var user_pay_price = final_total + deliver_price_amount + - discountAmount;
-                        res.json({
-                            "status": "1",
-                            "payload": result,
-                            "total": total.toFixed(2),
-                            "deliver_price_amount": deliver_price_amount.toFixed(2),
-                            "discount_amount": discountAmount.toFixed(2),
-                            "user_pay_price": user_pay_price.toFixed(2),
-                            "message": msg_success
-                        })
-
-                    })
-
+                res.json({
+                    "status": "1",
+                    "payload": result,
+                    "total": total.toFixed(2),
+                    "message": msg_success
+                })
+                
 
             })
         })
@@ -601,301 +509,301 @@ module.exports.controller = (app, io, socket_list ) => {
 
     // =================================== PROMO CODE LIST ===================================
 
-    app.post('/api/app/promo_code_list', (req, res) => {
-        helper.Dlog(req.body)
-        var reqObj = req.body
+    // app.post('/api/app/promo_code_list', (req, res) => {
+    //     helper.Dlog(req.body)
+    //     var reqObj = req.body
 
-        checkAccessToken(req.headers, res, (userObj) => {
-
-
-            db.query("SELECT `promo_code_id`, `code`, `title`, `description`, `type`, `min_order_amount`, `max_discount_amount`, `offer_price`, `start_date`, `end_date`, `created_date`, `modify_date` FROM `promo_code_detail` WHERE `start_date` <= NOW() AND `end_date` >= NOW()  AND `status` = 1 ORDER BY `start_date` ", [], (err, result) => {
-
-                if (err) {
-                    helper.ThrowHtmlError(err, res)
-                    return
-                }
-
-                res.json({
-                    'status': '1',
-                    'payload': result,
-                    'message': msg_success
-                })
-            })
+    //     checkAccessToken(req.headers, res, (userObj) => {
 
 
-        }, "1")
-    })
+    //         db.query("SELECT `promo_code_id`, `code`, `title`, `description`, `type`, `min_order_amount`, `max_discount_amount`, `offer_price`, `start_date`, `end_date`, `created_date`, `modify_date` FROM `promo_code_detail` WHERE `start_date` <= NOW() AND `end_date` >= NOW()  AND `status` = 1 ORDER BY `start_date` ", [], (err, result) => {
+
+    //             if (err) {
+    //                 helper.ThrowHtmlError(err, res)
+    //                 return
+    //             }
+
+    //             res.json({
+    //                 'status': '1',
+    //                 'payload': result,
+    //                 'message': msg_success
+    //             })
+    //         })
+
+
+    //     }, "1")
+    // })
 
 
 
     // =================================== PAYMENT METHOD ADD ===================================
 
-    app.post('/api/app/add_payment_method', (req, res) => {
-        helper.Dlog(req.body);
-        var reqObj = req.body;
+    // app.post('/api/app/add_payment_method', (req, res) => {
+    //     helper.Dlog(req.body);
+    //     var reqObj = req.body;
 
-        checkAccessToken(req.headers, res, (userObj) => {
-            helper.CheckParameterValid(res, reqObj, ["name", "card_number", "card_month", "card_year"], () => {
-                db.query("INSERT INTO `payment_method_detail` (`user_id`, `name`, `card_number`, `card_month`, `card_year`) VALUES (?,?,?, ?,? )", [
-                    userObj.user_id, reqObj.name, reqObj.card_number, reqObj.card_month, reqObj.card_year
-                ], (err, result) => {
-                    if (err) {
-                        helper.ThrowHtmlError(err, res);
-                        return
-                    }
+    //     checkAccessToken(req.headers, res, (userObj) => {
+    //         helper.CheckParameterValid(res, reqObj, ["name", "card_number", "card_month", "card_year"], () => {
+    //             db.query("INSERT INTO `payment_method_detail` (`user_id`, `name`, `card_number`, `card_month`, `card_year`) VALUES (?,?,?, ?,? )", [
+    //                 userObj.user_id, reqObj.name, reqObj.card_number, reqObj.card_month, reqObj.card_year
+    //             ], (err, result) => {
+    //                 if (err) {
+    //                     helper.ThrowHtmlError(err, res);
+    //                     return
+    //                 }
 
-                    if (result) {
-                        res.json({
-                            "status": "1",
-                            "message": msg_add_payment_method
-                        })
-                    } else {
-                        res.json({
-                            "status": "1",
-                            "message": msg_fail
-                        })
-                    }
-                })
-            })
-        })
-    })
+    //                 if (result) {
+    //                     res.json({
+    //                         "status": "1",
+    //                         "message": msg_add_payment_method
+    //                     })
+    //                 } else {
+    //                     res.json({
+    //                         "status": "1",
+    //                         "message": msg_fail
+    //                     })
+    //                 }
+    //             })
+    //         })
+    //     })
+    // })
 
 
 
     // =================================== PAYMENT METHOD REMOVE ===================================
 
-    app.post('/api/app/remove_payment_method', (req, res) => {
-        helper.Dlog(req.body);
-        var reqObj = req.body;
+    // app.post('/api/app/remove_payment_method', (req, res) => {
+    //     helper.Dlog(req.body);
+    //     var reqObj = req.body;
 
-        checkAccessToken(req.headers, res, (userObj) => {
-            helper.CheckParameterValid(res, reqObj, ["pay_id"], () => {
-                db.query("UPDATE `payment_method_detail` SET `status`= 2 WHERE `pay_id` = ? AND `user_id` = ? AND `status` = 1 ", [
-                    reqObj.pay_id, userObj.user_id
-                ], (err, result) => {
-                    if (err) {
-                        helper.ThrowHtmlError(err, res);
-                        return
-                    }
+    //     checkAccessToken(req.headers, res, (userObj) => {
+    //         helper.CheckParameterValid(res, reqObj, ["pay_id"], () => {
+    //             db.query("UPDATE `payment_method_detail` SET `status`= 2 WHERE `pay_id` = ? AND `user_id` = ? AND `status` = 1 ", [
+    //                 reqObj.pay_id, userObj.user_id
+    //             ], (err, result) => {
+    //                 if (err) {
+    //                     helper.ThrowHtmlError(err, res);
+    //                     return
+    //                 }
 
-                    if (result.affectedRows > 0) {
-                        res.json({
-                            "status": "1",
-                            "message": msg_remove_payment_method
-                        })
-                    } else {
-                        res.json({
-                            "status": "1",
-                            "message": msg_fail
-                        })
-                    }
-                })
-            })
-        })
-    })
+    //                 if (result.affectedRows > 0) {
+    //                     res.json({
+    //                         "status": "1",
+    //                         "message": msg_remove_payment_method
+    //                     })
+    //                 } else {
+    //                     res.json({
+    //                         "status": "1",
+    //                         "message": msg_fail
+    //                     })
+    //                 }
+    //             })
+    //         })
+    //     })
+    // })
 
 
 
     // =================================== PAYMENT METHOD ===================================
 
-    app.post('/api/app/payment_method', (req, res) => {
-        helper.Dlog(req.body);
-        var reqObj = req.body;
+    // app.post('/api/app/payment_method', (req, res) => {
+    //     helper.Dlog(req.body);
+    //     var reqObj = req.body;
 
-        checkAccessToken(req.headers, res, (userObj) => {
+    //     checkAccessToken(req.headers, res, (userObj) => {
 
-            db.query("SELECT `pay_id`, `name`, RIGHT( `card_number`, 4) AS `card_number` , `card_month`, `card_year` FROM `payment_method_detail` WHERE  `user_id` = ? AND `status` = 1 ", [
-                userObj.user_id
-            ], (err, result) => {
-                if (err) {
-                    helper.ThrowHtmlError(err, res);
-                    return
-                }
+    //         db.query("SELECT `pay_id`, `name`, RIGHT( `card_number`, 4) AS `card_number` , `card_month`, `card_year` FROM `payment_method_detail` WHERE  `user_id` = ? AND `status` = 1 ", [
+    //             userObj.user_id
+    //         ], (err, result) => {
+    //             if (err) {
+    //                 helper.ThrowHtmlError(err, res);
+    //                 return
+    //             }
 
-                res.json({
-                    "status": "1",
-                    "payload": result,
-                    "message": msg_success
-                })
-            })
+    //             res.json({
+    //                 "status": "1",
+    //                 "payload": result,
+    //                 "message": msg_success
+    //             })
+    //         })
 
-        })
-    })
+    //     })
+    // })
 
 
 
     // =================================== ORDER PLACE ===================================
 
-    app.post('/api/app/order_place', (req, res) => {
-        helper.Dlog(req.body);
-        var reqObj = req.body;
+    // app.post('/api/app/order_place', (req, res) => {
+    //     helper.Dlog(req.body);
+    //     var reqObj = req.body;
 
-        checkAccessToken(req.headers, res, (userObj) => {
-            helper.CheckParameterValid(res, reqObj, ["address_id", "payment_type", "deliver_type", "pay_id", "promo_code_id"], () => {
-                getUserCart(res, userObj.user_id, (result, total) => {
-                    if (result.length > 0) {
+    //     checkAccessToken(req.headers, res, (userObj) => {
+    //         helper.CheckParameterValid(res, reqObj, ["address_id", "payment_type", "deliver_type", "pay_id", "promo_code_id"], () => {
+    //             getUserCart(res, userObj.user_id, (result, total) => {
+    //                 if (result.length > 0) {
 
-                        db.query('SELECT `pay_id`, `user_id`, `card_month`, `card_year` FROM `payment_method_detail` WHERE `pay_id` = ? AND `status` = 1; ' +
-                            'SELECT `promo_code_id`, `min_order_amount`, `max_discount_amount`, `offer_price` FROM `promo_code_detail` WHERE  `start_date` <= NOW() AND `end_date` >= NOW()  AND `status` = 1  AND `promo_code_id` = ? ; ' +
-                            'SELECT `address_id`, `user_id` FROM `address_detail` WHERE `address_id` = ? AND `user_id` = ? AND `status` = 1 ;', [reqObj.pay_id, reqObj.promo_code_id, reqObj.address_id, userObj.user_id], (err, pResult) => {
-                                if (err) {
-                                    helper.ThrowHtmlError(err, res)
-                                    return
-                                }
-
-
-
-                                var deliver_price_amount = 0.0
-
-                                if ((reqObj.deliver_type == "1" && pResult[2].length == 0)) {
-                                    res.json({
-                                        'status': "0"
-                                        , 'message': "Please select address"
-                                    })
-                                    return
-                                }
-
-                                if (reqObj.deliver_type == "1") {
-                                    deliver_price_amount = deliver_price
-                                } else {
-                                    deliver_price_amount = 0.0;
-                                }
+    //                     db.query('SELECT `pay_id`, `user_id`, `card_month`, `card_year` FROM `payment_method_detail` WHERE `pay_id` = ? AND `status` = 1; ' +
+    //                         'SELECT `promo_code_id`, `min_order_amount`, `max_discount_amount`, `offer_price` FROM `promo_code_detail` WHERE  `start_date` <= NOW() AND `end_date` >= NOW()  AND `status` = 1  AND `promo_code_id` = ? ; ' +
+    //                         'SELECT `address_id`, `user_id` FROM `address_detail` WHERE `address_id` = ? AND `user_id` = ? AND `status` = 1 ;', [reqObj.pay_id, reqObj.promo_code_id, reqObj.address_id, userObj.user_id], (err, pResult) => {
+    //                             if (err) {
+    //                                 helper.ThrowHtmlError(err, res)
+    //                                 return
+    //                             }
 
 
-                                var final_total = total
-                                var discountAmount = 0.0
 
-                                if (reqObj.promo_code_id != "") {
-                                    if (pResult[1].length > 0) {
-                                        //Promo Code Apply & Valid
+    //                             var deliver_price_amount = 0.0
 
-                                        if (final_total > pResult[1][0].min_order_amount) {
+    //                             if ((reqObj.deliver_type == "1" && pResult[2].length == 0)) {
+    //                                 res.json({
+    //                                     'status': "0"
+    //                                     , 'message': "Please select address"
+    //                                 })
+    //                                 return
+    //                             }
 
-                                            if (pResult[1][0].type == 2) {
-                                                // Fixed Discount
-                                                discountAmount = pResult[1][0].offer_price
-                                            } else {
-                                                //% Per
-
-                                                var disVal = final_total * (pResult[1][0].offer_price / 100)
-
-                                                helper.Dlog("disVal: " + disVal);
-
-                                                if (pResult[1][0].max_discount_amount <= disVal) {
-                                                    //Max discount is more then disVal
-                                                    discountAmount = pResult[1][0].max_discount_amount
-                                                } else {
-                                                    //Max discount is Small then disVal
-                                                    discountAmount = disVal
-                                                }
-                                            }
+    //                             if (reqObj.deliver_type == "1") {
+    //                                 deliver_price_amount = deliver_price
+    //                             } else {
+    //                                 deliver_price_amount = 0.0;
+    //                             }
 
 
-                                        } else {
-                                            res.json({
-                                                'status': "0"
-                                                , 'message': "Promo Code not apply need min order: $" + pResult[1][0].min_order_amount
-                                            })
-                                            return
-                                        }
+    //                             var final_total = total
+    //                             var discountAmount = 0.0
 
-                                    } else {
-                                        //Promo Code Apply not Valid
-                                        res.json({
-                                            'status': "0"
-                                            , 'message': "Sorry, Promo Code not apply"
-                                        })
-                                        return
-                                    }
-                                }
+    //                             if (reqObj.promo_code_id != "") {
+    //                                 if (pResult[1].length > 0) {
+    //                                     //Promo Code Apply & Valid
 
-                                if (reqObj.payment_type == "1" || (reqObj.payment_type == "2" && pResult[0].length > 0)) {
+    //                                     if (final_total > pResult[1][0].min_order_amount) {
 
-                                    var cartId = result.map((cObj) => {
-                                        return cObj.cart_id
-                                    })
+    //                                         if (pResult[1][0].type == 2) {
+    //                                             // Fixed Discount
+    //                                             discountAmount = pResult[1][0].offer_price
+    //                                         } else {
+    //                                             //% Per
 
-                                    var user_pay_price = final_total + deliver_price_amount + - discountAmount;
-                                    helper.Dlog("user_pay_price: " + user_pay_price);
-                                    helper.Dlog(cartId.toString())
+    //                                             var disVal = final_total * (pResult[1][0].offer_price / 100)
 
-                                    db.query("INSERT INTO `order_detail`(`cart_id`, `user_id`, `address_id`, `total_price`, `user_pay_price`, `discount_price`, `deliver_price`, `promo_code_id`, `deliver_type`, `payment_type`) VALUES (?,?,?, ?,?,?, ?,?,?, ? )", [
-                                        cartId.toString(), userObj.user_id, reqObj.address_id, total, user_pay_price, discountAmount, deliver_price_amount, reqObj.promo_code_id, reqObj.deliver_type, reqObj.payment_type
+    //                                             helper.Dlog("disVal: " + disVal);
 
-                                    ], (err, result) => {
-                                        if (err) {
-                                            helper.ThrowHtmlError(err, res)
-                                            return
-                                        }
+    //                                             if (pResult[1][0].max_discount_amount <= disVal) {
+    //                                                 //Max discount is more then disVal
+    //                                                 discountAmount = pResult[1][0].max_discount_amount
+    //                                             } else {
+    //                                                 //Max discount is Small then disVal
+    //                                                 discountAmount = disVal
+    //                                             }
+    //                                         }
 
-                                        if (result) {
 
-                                            if (reqObj.payment_type == "1") {
+    //                                     } else {
+    //                                         res.json({
+    //                                             'status': "0"
+    //                                             , 'message': "Promo Code not apply need min order: $" + pResult[1][0].min_order_amount
+    //                                         })
+    //                                         return
+    //                                     }
 
-                                                db.query("INSERT INTO `notification_detail`( `ref_id`, `user_id`, `title`, `message`, `notification_type`) VALUES (?,?,?, ?,?)", [result.insertId, userObj.user_id,
-                                                    "Order Placed", "your order #" + result.insertId + " placed.", "2"], (err, iResult) => {
-                                                        if (err) {
-                                                            helper.ThrowHtmlError(err);
-                                                            return
-                                                        }
+    //                                 } else {
+    //                                     //Promo Code Apply not Valid
+    //                                     res.json({
+    //                                         'status': "0"
+    //                                         , 'message': "Sorry, Promo Code not apply"
+    //                                     })
+    //                                     return
+    //                                 }
+    //                             }
 
-                                                        if (iResult) {
-                                                            helper.Dlog("Notification Added Done")
-                                                        } else {
-                                                            helper.Dlog("Notification Fail")
-                                                        }
-                                                    })
-                                            }
+    //                             if (reqObj.payment_type == "1" || (reqObj.payment_type == "2" && pResult[0].length > 0)) {
 
-                                            db.query("UPDATE `cart_detail` SET `status`= 2 ,`modify_date`= NOW() WHERE `user_id` = ? AND `status`= 1 ", [userObj.user_id], (err, cResult) => {
-                                                if (err) {
-                                                    helper.ThrowHtmlError(err);
-                                                    return
-                                                }
+    //                                 var cartId = result.map((cObj) => {
+    //                                     return cObj.cart_id
+    //                                 })
 
-                                                if (cResult.affectedRows > 0) {
-                                                    helper.Dlog("user card clear done")
-                                                } else {
-                                                    helper.Dlog("user card clear fail")
-                                                }
-                                            })
+    //                                 var user_pay_price = final_total + deliver_price_amount + - discountAmount;
+    //                                 helper.Dlog("user_pay_price: " + user_pay_price);
+    //                                 helper.Dlog(cartId.toString())
 
-                                            res.json({
-                                                'status': "1",
-                                                'payload': {
-                                                    'order_id': result.insertId,
-                                                    'user_pay_price': user_pay_price,
-                                                    'deliver_price': discountAmount,
-                                                    'discount_price': deliver_price_amount,
-                                                    'total_price': total
-                                                }
-                                                , 'message': "your order place successfully"
-                                            })
-                                        } else {
-                                            res.json({
-                                                'status': "0"
-                                                , 'message': msg_fail
-                                            })
-                                        }
-                                    })
-                                } else {
-                                    res.json({
-                                        'status': "0"
-                                        , 'message': msg_fail
-                                    })
-                                }
-                            })
+    //                                 db.query("INSERT INTO `order_detail`(`cart_id`, `user_id`, `address_id`, `total_price`, `user_pay_price`, `discount_price`, `deliver_price`, `promo_code_id`, `deliver_type`, `payment_type`) VALUES (?,?,?, ?,?,?, ?,?,?, ? )", [
+    //                                     cartId.toString(), userObj.user_id, reqObj.address_id, total, user_pay_price, discountAmount, deliver_price_amount, reqObj.promo_code_id, reqObj.deliver_type, reqObj.payment_type
 
-                    } else {
-                        res.json({
-                            'status': "0"
-                            , 'message': "cart is empty"
-                        })
-                    }
-                })
-            })
-        })
-    })
+    //                                 ], (err, result) => {
+    //                                     if (err) {
+    //                                         helper.ThrowHtmlError(err, res)
+    //                                         return
+    //                                     }
+
+    //                                     if (result) {
+
+    //                                         if (reqObj.payment_type == "1") {
+
+    //                                             db.query("INSERT INTO `notification_detail`( `ref_id`, `user_id`, `title`, `message`, `notification_type`) VALUES (?,?,?, ?,?)", [result.insertId, userObj.user_id,
+    //                                                 "Order Placed", "your order #" + result.insertId + " placed.", "2"], (err, iResult) => {
+    //                                                     if (err) {
+    //                                                         helper.ThrowHtmlError(err);
+    //                                                         return
+    //                                                     }
+
+    //                                                     if (iResult) {
+    //                                                         helper.Dlog("Notification Added Done")
+    //                                                     } else {
+    //                                                         helper.Dlog("Notification Fail")
+    //                                                     }
+    //                                                 })
+    //                                         }
+
+    //                                         db.query("UPDATE `cart_detail` SET `status`= 2 ,`modify_date`= NOW() WHERE `user_id` = ? AND `status`= 1 ", [userObj.user_id], (err, cResult) => {
+    //                                             if (err) {
+    //                                                 helper.ThrowHtmlError(err);
+    //                                                 return
+    //                                             }
+
+    //                                             if (cResult.affectedRows > 0) {
+    //                                                 helper.Dlog("user card clear done")
+    //                                             } else {
+    //                                                 helper.Dlog("user card clear fail")
+    //                                             }
+    //                                         })
+
+    //                                         res.json({
+    //                                             'status': "1",
+    //                                             'payload': {
+    //                                                 'order_id': result.insertId,
+    //                                                 'user_pay_price': user_pay_price,
+    //                                                 'deliver_price': discountAmount,
+    //                                                 'discount_price': deliver_price_amount,
+    //                                                 'total_price': total
+    //                                             }
+    //                                             , 'message': "your order place successfully"
+    //                                         })
+    //                                     } else {
+    //                                         res.json({
+    //                                             'status': "0"
+    //                                             , 'message': msg_fail
+    //                                         })
+    //                                     }
+    //                                 })
+    //                             } else {
+    //                                 res.json({
+    //                                     'status': "0"
+    //                                     , 'message': msg_fail
+    //                                 })
+    //                             }
+    //                         })
+
+    //                 } else {
+    //                     res.json({
+    //                         'status': "0"
+    //                         , 'message': "cart is empty"
+    //                     })
+    //                 }
+    //             })
+    //         })
+    //     })
+    // })
 
 
 
